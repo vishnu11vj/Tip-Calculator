@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tip Calculator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f0f4f8;font-family:'Poppins',sans-serif;padding:20px;}
+  .card{width:440px;background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.1);}
+  .header{background:linear-gradient(135deg,#00b09b,#96c93d);padding:28px 32px;color:#fff;}
+  .header h1{font-size:22px;font-weight:700;}
+  .header p{font-size:13px;opacity:0.8;margin-top:4px;}
+  .body{padding:28px 32px;}
+  .field{margin-bottom:20px;}
+  label{display:block;font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+  .input-wrap{position:relative;}
+  .prefix{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#aaa;font-weight:600;}
+  input[type=number]{width:100%;padding:13px 14px 13px 32px;border:2px solid #eef2f5;border-radius:12px;font-family:'Poppins';font-size:16px;outline:none;transition:border 0.2s;color:#1a1a1a;}
+  input[type=number]:focus{border-color:#00b09b;}
+  .tip-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
+  .tip-btn{padding:8px 16px;border:2px solid #eef2f5;border-radius:10px;background:#fff;font-family:'Poppins';font-size:14px;font-weight:600;color:#555;cursor:pointer;transition:all 0.2s;}
+  .tip-btn:hover{border-color:#00b09b;color:#00b09b;}
+  .tip-btn.active{background:#00b09b;border-color:#00b09b;color:#fff;}
+  .custom-tip{width:100%;padding:10px 14px;border:2px solid #eef2f5;border-radius:10px;font-family:'Poppins';font-size:14px;outline:none;margin-top:8px;transition:border 0.2s;}
+  .custom-tip:focus{border-color:#00b09b;}
+  .result{background:#f8fffe;border:2px solid #e0f5f2;border-radius:16px;padding:20px;margin-top:8px;}
+  .result-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #e8f8f5;}
+  .result-row:last-child{border-bottom:none;padding-bottom:0;}
+  .result-label{font-size:14px;color:#666;}
+  .result-val{font-size:18px;font-weight:700;color:#00b09b;}
+  .result-row.total .result-label{font-size:16px;font-weight:600;color:#1a1a1a;}
+  .result-row.total .result-val{font-size:24px;color:#00b09b;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header"><h1>💰 Tip Calculator</h1><p>Split bills and calculate tips instantly</p></div>
+  <div class="body">
+    <div class="field">
+      <label>Bill Amount</label>
+      <div class="input-wrap"><span class="prefix">$</span><input type="number" id="bill" placeholder="0.00" oninput="calc()"></div>
+    </div>
+    <div class="field">
+      <label>Select Tip %</label>
+      <div class="tip-btns">
+        <button class="tip-btn" onclick="setTip(5,this)">5%</button>
+        <button class="tip-btn active" onclick="setTip(10,this)">10%</button>
+        <button class="tip-btn" onclick="setTip(15,this)">15%</button>
+        <button class="tip-btn" onclick="setTip(20,this)">20%</button>
+        <button class="tip-btn" onclick="setTip(25,this)">25%</button>
+      </div>
+      <input class="custom-tip" type="number" id="customTip" placeholder="Custom %" oninput="setCustomTip()" min="0" max="100">
+    </div>
+    <div class="field">
+      <label>Split Between</label>
+      <div class="input-wrap"><input type="number" id="people" placeholder="1" value="1" min="1" oninput="calc()" style="padding-left:14px"></div>
+    </div>
+    <div class="result">
+      <div class="result-row"><span class="result-label">Tip Amount</span><span class="result-val" id="tipAmt">$0.00</span></div>
+      <div class="result-row"><span class="result-label">Per Person (Tip)</span><span class="result-val" id="tipPer">$0.00</span></div>
+      <div class="result-row total"><span class="result-label">Total per Person</span><span class="result-val" id="totalPer">$0.00</span></div>
+    </div>
+  </div>
+</div>
+<script>
+  let tipPct=10;
+  function setTip(p,btn){
+    tipPct=p;
+    document.querySelectorAll('.tip-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('customTip').value='';
+    calc();
+  }
+  function setCustomTip(){
+    const v=parseFloat(document.getElementById('customTip').value);
+    if(!isNaN(v)){tipPct=v;document.querySelectorAll('.tip-btn').forEach(b=>b.classList.remove('active'));}
+    calc();
+  }
+  function calc(){
+    const bill=parseFloat(document.getElementById('bill').value)||0;
+    const people=Math.max(1,parseInt(document.getElementById('people').value)||1);
+    const tip=bill*(tipPct/100);
+    const total=bill+tip;
+    document.getElementById('tipAmt').textContent='$'+tip.toFixed(2);
+    document.getElementById('tipPer').textContent='$'+(tip/people).toFixed(2);
+    document.getElementById('totalPer').textContent='$'+(total/people).toFixed(2);
+  }
+</script>
+</body>
+</html>
